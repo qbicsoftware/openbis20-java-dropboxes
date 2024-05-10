@@ -23,7 +23,7 @@ package life.qbic.registration.handler
  *            |- data1.txt
  *            |- data2.txt
  *
- * @since 1.3.0
+ * @since 1.0.0
  */
 interface DatasetLocator {
 
