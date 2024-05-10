@@ -5,11 +5,8 @@ import ch.systemsx.cisd.etlserver.registrator.api.v2.IDataSetRegistrationTransac
 import groovy.util.logging.Log4j2
 import life.qbic.registration.handler.*
 import life.qbic.registration.registries.DefaultResultRegistry
-import life.qbic.registration.types.DefaultResult
 
-import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.function.Consumer
 
 @Log4j2
 class MainETL extends AbstractJavaDataSetRegistrationDropboxV2 {

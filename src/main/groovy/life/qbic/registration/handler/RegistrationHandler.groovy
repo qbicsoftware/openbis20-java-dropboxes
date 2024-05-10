@@ -1,7 +1,6 @@
 package life.qbic.registration.handler
 
 import life.qbic.registration.registries.DefaultResultRegistry
-import life.qbic.registration.types.DefaultResult
 
 /**
  * Determines the correct registry for a given dataset type.
@@ -28,7 +27,7 @@ class RegistrationHandler {
         Optional<Registry> registry
         switch (dataset) {
             default:
-                registry = Optional.of(new DefaultResultRegistry(new DefaultResult()));
+                registry = Optional.of(new DefaultResultRegistry());
         }
         return registry
     }

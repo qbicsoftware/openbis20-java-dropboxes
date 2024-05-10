@@ -30,7 +30,7 @@ interface DatasetLocator {
     /**
      * Returns the top level absolute path of the dataset.
      * @return the absolute dataset path
-     * @since 1.3.0
+     * @since 1.0.0
      */
     String getPathToDataset()
 }
