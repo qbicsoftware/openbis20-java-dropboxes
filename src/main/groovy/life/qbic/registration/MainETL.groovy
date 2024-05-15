@@ -30,16 +30,4 @@ class MainETL extends AbstractJavaDataSetRegistrationDropboxV2 {
         }
     }
 
-    private static Optional<String> getExtractedRootDir(String tmpFolderPath) {
-        File tmpDir = new File(tmpFolderPath)
-        String[] childList = tmpDir.list();
-        if(childList.size() == 1) {
-            String childPath = tmpDir.getAbsolutePath() + "/" + childList[0];
-            if (new File(childPath).isDirectory()) {
-                return Optional.of(childPath)
-            }
-        }
-        return Optional.empty()
-    }
-
 }

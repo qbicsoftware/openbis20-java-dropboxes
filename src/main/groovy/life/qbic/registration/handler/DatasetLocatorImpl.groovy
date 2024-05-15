@@ -38,31 +38,26 @@ class DatasetLocatorImpl implements DatasetLocator{
      */
     @Override
     String getPathToDataset() {
-        return findNestedDataset().orElseThrow()
+        return findOrCreateDataPath().orElseThrow()
     }
 
-    private Optional<String> findNestedDataset() {
+    private Optional<String> findOrCreateDataPath() {
         File rootDir = new File(incomingPath)
         if (!rootDir.isDirectory())
             return Optional.empty()
-        /*
-        Now we iterate through the list of child elements in the folder, and search for the directory name appearances.
-        If it is a child directory, that means it has been processed with the dropboxhandler and
-        we can return the nested dataset path.
-        */
-        for (String child : rootDir.list()) {
-            if (child.startsWith(provenance.measurementID)) {
-                String innerFolderPath = rootDir.getAbsolutePath() + "/" + child
-                File innerFolder = new File(innerFolderPath)
-                if(innerFolder.list().size() == 1) {
-                    String singleFilePath = innerFolderPath+"/"+innerFolder.list()[0]
-                    return Optional.of(singleFilePath)
-                } else {
-                    return Optional.of(innerFolderPath)
-                }
-            }
+        List<String> fileNames = provenance.datasetFiles;
+        if(fileNames.size() == 0)
+            return Optional.empty()
+        if(fileNames.size() == 1)
+            return Optional.of(rootDir.getAbsolutePath() + "/" + fileNames[0])
+        // more than one file
+        var newDataFolder = new File(rootDir.getAbsolutePath(), "data");
+        newDataFolder.mkdir();
+        for(String fileName : fileNames) {
+            String targetPath = newDataFolder.getAbsolutePath()+"/"+fileName
+            new File(rootDir.getAbsolutePath()+"/"+fileName).renameTo(targetPath)
         }
-        return Optional.empty()
+        return Optional.of(newDataFolder.getAbsolutePath())
     }
 
     private static boolean isAbsolutePath(String path) {
