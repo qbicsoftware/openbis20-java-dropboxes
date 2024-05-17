@@ -5,6 +5,7 @@ import life.qbic.registration.types.QDatasetType
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import java.util.stream.Collectors
 
 /**
  * A measurement ID references an openBIS object code used for measurements
@@ -16,8 +17,10 @@ class MeasurementID {
 
     /**
      * <p>The regular expression of a valid QBiC measurement code.</p>
+     * Prefixes are checked later
+     * Z and Y are not allowed, as barcode scanners can switch these depending on country settings.
      */
-    static final Pattern QBIC_MEASUREMENT_CODE_SCHEMA = ~/N*[GM]SQ[A-X0-9]{4}[0-9]{3}[A-X0-9]{2}-[0-9]{14}/
+    static final Pattern QBIC_MEASUREMENT_CODE_SCHEMA = ~/[A-X]*Q[A-X0-9]{4}[0-9]{3}[A-X0-9]{2}-[0-9]{14}/
     /**
      * <p>Holds the project code, which is always part of the object code.</p>
      */
@@ -81,13 +84,17 @@ class MeasurementID {
         String withoutPrefix = sampleId.replace(prefix, '')
         this.projectCode = withoutPrefix[0..4]
         this.runningNumber = Integer.parseInt(withoutPrefix[5..7])
-        this.runningDigit = withoutPrefix[8]
-        this.checksum = withoutPrefix[9]
+        this.runningDigit = withoutPrefix[8] as char
+        this.checksum = withoutPrefix[9] as char
         this.suffix = Long.parseLong(withoutPrefix[11..-1])
     }
 
     private void findMeasurementType(String id) {
-        for(String prefix : QDatasetType.BY_PREFIX.keySet()) {
+        // we try to find the longest matching prefix, in case their names overlap
+        List<String> prefixesByLength = QDatasetType.BY_PREFIX.keySet().stream()
+                .sorted(Comparator.comparingInt(String::length).reversed())
+                .collect(Collectors.toList());
+        for(String prefix : prefixesByLength) {
             if(id.startsWith(prefix)) {
                 this.prefix = prefix
                 this.datasetType = QDatasetType.BY_PREFIX.get(prefix)
