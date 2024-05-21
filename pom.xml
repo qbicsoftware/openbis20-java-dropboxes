@@ -12,8 +12,8 @@
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <openbis.version>20.10.7.3</openbis.version>
     <openbis.classifier>r1700646105</openbis.classifier>
     <groovy.version>3.0.10</groovy.version>
@@ -253,6 +253,14 @@
           </execution>
         </executions>
         <groupId>org.apache.maven.plugins</groupId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>16</source>
+          <target>16</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>
