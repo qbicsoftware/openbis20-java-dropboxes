@@ -17,19 +17,22 @@ public class DataSetProvenance implements Serializable {
   private static final long serialVersionUID = -1597156104025439195L;
 
   @JsonProperty("origin")
-  private final String origin;
+  private String origin;
   @JsonProperty("user")
-  private final String user;
+  private String user;
   @JsonProperty("measurementId")
-  private final String measurementId;
+  private String measurementId;
   @JsonProperty("datasetFiles")
-  private final String[] datasetFiles;
+  private String[] datasetFiles;
   @JsonProperty("taskId")
-  private final String taskId;
+  private String taskId;
   @JsonProperty("history")
-  private final String[] history;
+  private String[] history;
 
 
+  private DataSetProvenance() {
+
+  }
   public DataSetProvenance(String origin, String user, String measurementId, String[] datasetFiles,
       String taskId, String[] history) {
     this.origin = origin;

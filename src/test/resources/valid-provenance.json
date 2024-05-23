@@ -1,0 +1,14 @@
+{
+  "origin": "/Users/myuser/registration",
+  "user": "/Users/myuser",
+  "measurementId": "NGSQTEST001AE-1234512312",
+  "datasetFiles" : [
+    "file1.fastq.gz",
+    "file2.fastq.gz"
+  ],
+  "taskId": "ce36775e-0d06-471e-baa7-1e3b63de871f",
+  "history": [
+    "/some/dir",
+    "/some/other/dir"
+  ]
+}

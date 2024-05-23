@@ -97,6 +97,12 @@
       <artifactId>hotdeploy-plugins</artifactId>
       <version>13.01.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>2.4-M1-groovy-4.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <!-- This configures the target artifact repositories for deployment
@@ -116,4 +122,30 @@
       <url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-snapshots</url>
     </snapshotRepository>
   </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

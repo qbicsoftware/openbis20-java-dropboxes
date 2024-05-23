@@ -7,19 +7,10 @@ import ch.systemsx.cisd.etlserver.registrator.DataSetRegistrationContext;
 import ch.systemsx.cisd.etlserver.registrator.api.v2.AbstractJavaDataSetRegistrationDropboxV2;
 import ch.systemsx.cisd.etlserver.registrator.api.v2.IDataSet;
 import ch.systemsx.cisd.etlserver.registrator.api.v2.IDataSetRegistrationTransactionV2;
-import ch.systemsx.cisd.openbis.dss.generic.shared.api.internal.v2.IDataSetImmutable;
 import ch.systemsx.cisd.openbis.dss.generic.shared.api.internal.v2.ISampleImmutable;
-import ch.systemsx.cisd.openbis.dss.generic.shared.api.internal.v2.ISearchService;
-import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchCriteria;
-import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchCriteria.MatchClause;
-import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchCriteria.MatchClauseAttribute;
-import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchSubCriteria;
 import java.io.File;
-import java.util.List;
 import life.qbic.registration.openbis.exceptions.fail.MeasurementHasDataException;
-import life.qbic.registration.openbis.exceptions.fail.ToManyMeasurementsException;
 import life.qbic.registration.openbis.exceptions.fail.UnknownSampleTypeException;
-import life.qbic.registration.openbis.exceptions.retry.NoMeasurementsFoundException;
 import life.qbic.registration.openbis.types.QDatasetType;
 import life.qbic.registration.openbis.types.QPropertyType;
 import life.qbic.registration.openbis.types.QSampleType;
@@ -31,7 +22,7 @@ import life.qbic.registration.openbis.types.QSampleType;
  *  <ol>
  *    <li>fetching the measurement sample from openbis
  *    <li>creating a data set linked to the sample
- *    <li> moving files into the dataset
+ *    <li>moving files into the dataset
  *  </ol>
  *  Some constraints are taken care of during this process. These constraints being:
  *  <ul>
@@ -70,11 +61,11 @@ public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 
 
     String measurementId = dataSetProvenance.measurementId();
 
-    ISearchService searchService = transaction.getSearchService();
+    OpenBisSearchImpl openBisSearch = new OpenBisSearchImpl(transaction.getSearchService());
 
-    ISampleImmutable measurementSample = findMeasurementSample(measurementId, searchService);
+    ISampleImmutable measurementSample = openBisSearch.getMeasurementSample(measurementId);
 
-    if (doesMeasurementHaveData(measurementSample, searchService)) {
+    if (openBisSearch.doesMeasurementHaveData(measurementSample)) {
       throw new MeasurementHasDataException("Measurement " + measurementId + " has data attached.");
     }
     IDataSet newDataSet = transaction.createNewDataSet();
@@ -93,37 +84,4 @@ public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 
             "Unknown sample type: " + measurementSample.getSampleType()));
     return QDatasetType.fromQSampleType(qSampleType);
   }
-
-  private static ISampleImmutable findMeasurementSample(String measurementId,
-      ISearchService searchService) {
-    SearchCriteria measurementSearchCriteria = new SearchCriteria();
-    measurementSearchCriteria.addMatchClause(
-        MatchClause.createAttributeMatch(MatchClauseAttribute.CODE, measurementId));
-    List<ISampleImmutable> immutableSamples = searchService.searchForSamples(measurementSearchCriteria);
-
-    if (immutableSamples.isEmpty()) {
-      //measurement not found
-      throw new NoMeasurementsFoundException("Measurement '" + measurementId + "' not found");
-    }
-    if (immutableSamples.size() > 1) {
-      throw new ToManyMeasurementsException(
-          "Multiple measurement with id '" + measurementId + "' found");
-    }
-    return immutableSamples.get(0);
-  }
-
-  private boolean doesMeasurementHaveData(ISampleImmutable sample, ISearchService searchService) {
-    SearchCriteria parentSampleSearchCriteria = new SearchCriteria();
-    parentSampleSearchCriteria.addMatchClause(
-        MatchClause.createAttributeMatch(MatchClauseAttribute.PERM_ID, sample.getPermId()));
-
-    SearchCriteria dataSetSearchCriteria = new SearchCriteria();
-    dataSetSearchCriteria.addSubCriteria(
-        SearchSubCriteria.createDataSetContainerCriteria(parentSampleSearchCriteria));
-    List<IDataSetImmutable> existingDataSets = searchService.searchForDataSets(
-        dataSetSearchCriteria);
-    return !existingDataSets.isEmpty();
-
-  }
-
 }
