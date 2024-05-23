@@ -1,5 +1,7 @@
 package life.qbic.registration.openbis;
 
+import static java.util.Objects.requireNonNull;
+
 import ch.systemsx.cisd.common.exceptions.NotImplementedException;
 import ch.systemsx.cisd.etlserver.registrator.DataSetRegistrationContext;
 import ch.systemsx.cisd.etlserver.registrator.api.v2.AbstractJavaDataSetRegistrationDropboxV2;
@@ -12,25 +14,44 @@ import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchCriteria;
 import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchCriteria.MatchClause;
 import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchCriteria.MatchClauseAttribute;
 import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchSubCriteria;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
+import life.qbic.registration.openbis.exceptions.fail.MeasurementHasDataException;
+import life.qbic.registration.openbis.exceptions.fail.ToManyMeasurementsException;
+import life.qbic.registration.openbis.exceptions.fail.UnknownSampleTypeException;
+import life.qbic.registration.openbis.exceptions.retry.NoMeasurementsFoundException;
 import life.qbic.registration.openbis.types.QDatasetType;
 import life.qbic.registration.openbis.types.QPropertyType;
 import life.qbic.registration.openbis.types.QSampleType;
 
 /**
- * TODO!
- * <b>short description</b>
- *
- * <p>detailed description</p>
- *
- * @since <version tag>
+ * The Dropbox ETL process.
+ * <p>
+ * This process is responsible for
+ *  <ol>
+ *    <li>fetching the measurement sample from openbis
+ *    <li>creating a data set linked to the sample
+ *    <li> moving files into the dataset
+ *  </ol>
+ *  Some constraints are taken care of during this process. These constraints being:
+ *  <ul>
+ *    <li>the measurement sample already exists in openbis
+ *    <li>only one measurement sample exists with the provided identifier
+ *    <li>the measurement sample has no data set linked as one measurement can only have one dataset.
+ *  </ul>
  */
-public class DataSetRegistrationDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 {
+public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 {
 
-  private final String provenanceFileName = "provenance.json";
+  private static final String PROVENANCE_FILE_NAME = "provenance.json";
+  private final ProvenanceParser provenanceParser;
+
+  public OpenBisDropboxETL() {
+    provenanceParser = new ProvenanceParser();
+  }
+
+  protected OpenBisDropboxETL(ProvenanceParser provenanceParser) {
+    this.provenanceParser = requireNonNull(provenanceParser, "provenanceParser must not be null");
+  }
 
 
   public interface WithRetryOption {
@@ -44,8 +65,8 @@ public class DataSetRegistrationDropboxETL extends AbstractJavaDataSetRegistrati
 
   @Override
   public void process(IDataSetRegistrationTransactionV2 transaction) {
-    DataSetProvenance dataSetProvenance = parseProvenanceJson(
-        new File(transaction.getIncoming(), provenanceFileName));
+    DataSetProvenance dataSetProvenance = provenanceParser.parseProvenanceJson(
+        new File(transaction.getIncoming(), PROVENANCE_FILE_NAME));
 
     String measurementId = dataSetProvenance.measurementId();
 
@@ -103,49 +124,6 @@ public class DataSetRegistrationDropboxETL extends AbstractJavaDataSetRegistrati
         dataSetSearchCriteria);
     return !existingDataSets.isEmpty();
 
-  }
-
-  private DataSetProvenance parseProvenanceJson(File provenanceFile) {
-    ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      return objectMapper.readValue(provenanceFile,
-          DataSetProvenance.class);
-    } catch (IOException e) {
-      throw new ProvenanceParseException(
-          "Could not parse '" + provenanceFile.getAbsolutePath() + "'", e);
-    }
-  }
-
-  public static class NoMeasurementsFoundException extends RuntimeException implements
-      WithRetryOption {
-    public NoMeasurementsFoundException(String message) {
-      super(message);
-    }
-  }
-
-  public static class ProvenanceParseException extends RuntimeException {
-
-    public ProvenanceParseException(String message, Throwable cause) {
-      super(message, cause);
-    }
-  }
-
-  public static class UnknownSampleTypeException extends RuntimeException {
-    public UnknownSampleTypeException(String message) {
-      super(message);
-    }
-  }
-
-  public static class ToManyMeasurementsException extends RuntimeException {
-    public ToManyMeasurementsException(String message) {
-      super(message);
-    }
-  }
-
-  public static class MeasurementHasDataException extends RuntimeException {
-    public MeasurementHasDataException(String message) {
-      super(message);
-    }
   }
 
 }

@@ -1,7 +1,6 @@
 package life.qbic.registration.openbis;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -15,7 +14,6 @@ import java.util.Objects;
  */
 public class DataSetProvenance implements Serializable {
 
-  @Serial
   private static final long serialVersionUID = -1597156104025439195L;
 
   @JsonProperty("origin")

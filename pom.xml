@@ -3,20 +3,22 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>java-openbis20-dropboxes</artifactId>
-  <version>1.0.0</version> 
-  <groupId>life.qbic</groupId>
+
   <name>OpenBIS ETL routines written in Java</name>
   <url>https://github.com/qbicsoftware/openbis20-java-dropboxes</url>
   <description>ETL routines written in Java for OpenBIS version 20</description>
+
+  <groupId>life.qbic.registration</groupId>
+  <artifactId>java-openbis20-dropboxes</artifactId>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <openbis.version>20.10.7.3</openbis.version>
     <openbis.classifier>r1700646105</openbis.classifier>
-    <groovy.version>3.0.10</groovy.version>
   </properties>
 
   <repositories>
@@ -56,53 +58,7 @@
       <url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-releases</url>
     </repository>
   </repositories>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-bom</artifactId>
-        <version>${groovy.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.spockframework</groupId>
-        <artifactId>spock-bom</artifactId>
-        <version>2.0-M4-groovy-3.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <dependencies>
-
-      <!-- Bean Validation API and RI -->
-      <dependency>
-        <groupId>javax.validation</groupId>
-        <artifactId>validation-api</artifactId>
-        <version>1.0.0.GA</version>
-      </dependency>
-
-    <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2 -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-log4j2</artifactId>
-      <version>3.2.5</version>
-    </dependency>
-
-
-    <!-- Groovy dependencies -->
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
-      <version>${groovy.version}</version>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-sql</artifactId>
-      <version>${groovy.version}</version>
-    </dependency>
     <dependency>
       <groupId>life.qbic</groupId>
       <artifactId>openbis-api</artifactId>
@@ -135,24 +91,12 @@
       <version>18.06.2</version>
       <scope>provided</scope>
     </dependency>
-
+    <!-- Additional dependencies needed for openbis connection to work -->
     <dependency>
       <groupId>life.qbic</groupId>
       <artifactId>hotdeploy-plugins</artifactId>
       <version>13.01.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.spockframework</groupId>
-      <artifactId>spock-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>6.1.6</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <!-- This configures the target artifact repositories for deployment
@@ -172,104 +116,4 @@
       <url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-snapshots</url>
     </snapshotRepository>
   </distributionManagement>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.7.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.1.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.gmavenplus</groupId>
-        <artifactId>gmavenplus-plugin</artifactId>
-        <version>1.12.1</version>
-        <executions>
-          <execution>
-            <id>default</id>
-            <goals>
-              <goal>addSources</goal>
-              <goal>addTestSources</goal>
-              <goal>generateStubs</goal>
-              <goal>compile</goal>
-              <goal>generateTestStubs</goal>
-              <goal>compileTests</goal>
-              <goal>removeStubs</goal>
-              <goal>removeTestStubs</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>site</id>
-            <phase>site</phase>
-            <goals>
-              <goal>generateStubs</goal>
-              <goal>generateTestStubs</goal>
-              <goal>groovydoc</goal>
-              <goal>groovydocTests</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <groovyDocOutputDirectory>${project.build.directory}/site/gapidocs</groovyDocOutputDirectory>
-          <testGroovyDocOutputDirectory>${project.build.directory}/site/testgapidocs</testGroovyDocOutputDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M5</version>
-        <configuration>
-          <includes>
-            <include>**/*Spec</include>
-          </includes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>life.qbic</groupId>
-        <artifactId>groovydoc-maven-plugin</artifactId>
-        <version>1.0.2</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <configuration>
-              <archive>
-                <manifest>
-                  <mainClass>life.qbic.cli.PostregistrationToolEntryPoint</mainClass>
-                </manifest>
-              </archive>
-              <descriptorRefs>
-                <descriptorRef>jar-with-dependencies</descriptorRef>
-              </descriptorRefs>
-            </configuration>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-        <groupId>org.apache.maven.plugins</groupId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>14</source>
-          <target>14</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>life.qbic</groupId>
-        <artifactId>groovydoc-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-    </reporting>
 </project>
