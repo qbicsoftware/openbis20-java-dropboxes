@@ -12,11 +12,12 @@ public class ProvenanceParser {
 
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final Class<DataSetProvenance> DATA_SET_PROVENANCE_CLASS = DataSetProvenance.class;
 
   DataSetProvenance parseProvenanceJson(File provenanceFile) {
     try {
       return OBJECT_MAPPER.readValue(provenanceFile,
-          DataSetProvenance.class);
+          DATA_SET_PROVENANCE_CLASS);
     } catch (IOException e) {
       throw new ProvenanceParseException(
           "Could not parse '" + provenanceFile.getAbsolutePath() + "'", e);
