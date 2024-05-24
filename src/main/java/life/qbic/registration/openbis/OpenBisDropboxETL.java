@@ -30,6 +30,8 @@ import life.qbic.registration.openbis.types.QSampleType;
  *    <li>only one measurement sample exists with the provided identifier
  *    <li>the measurement sample has no data set linked as one measurement can only have one dataset.
  *  </ul>
+ *
+ * @version 1.0.0
  */
 public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 {
 
