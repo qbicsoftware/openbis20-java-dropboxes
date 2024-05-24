@@ -9,5 +9,5 @@ chore:
       - head-branch: [ '^chore', '^documentation', '^docs', '^ci', '^refactor' ]
 release:
   - all:
-      - base-branch: [ 'main', 'master' ]
+      - base-branch: [ 'main' ]
       - head-branch: [ 'development', 'dev' ]
