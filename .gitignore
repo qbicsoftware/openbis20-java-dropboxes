@@ -1,29 +1,34 @@
-# Compiled class file
-*.class
+# Eclipse
+.classpath
+.project
+.settings/
 
-# Log file
-*.log
+# VS Code
+.vscode
 
-# Maven targets
-target/*
+# Intellij
+.idea/
+*.iml
+*.iws
 
-# BlueJ files
-*.ctxt
+# Mac
+.DS_Store
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Maven
+target/
+**/.flattened-pom.xml
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+# Some of our applications generate logs, which should be ignored by git
+logs/
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+# Other
+**/.factorypath
 
-# misc
-*.DS_STORE
+# compiled Vaadin widgetsets
+**/VAADIN/widgetsets
+
+# From docs
+**/__pycache__
+
+# Properties, which may contain sensitive information
+**/developer.properties
