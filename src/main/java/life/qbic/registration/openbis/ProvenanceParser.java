@@ -11,12 +11,11 @@ import life.qbic.registration.openbis.exceptions.fail.ProvenanceParseException;
 public class ProvenanceParser {
 
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static final Class<DataSetProvenance> DATA_SET_PROVENANCE_CLASS = DataSetProvenance.class;
 
   static DataSetProvenance parseProvenanceJson(File provenanceFile) {
     try {
-      return OBJECT_MAPPER.readValue(provenanceFile,
+      return new ObjectMapper().readValue(provenanceFile,
           DATA_SET_PROVENANCE_CLASS);
     } catch (IOException e) {
       throw new ProvenanceParseException(
