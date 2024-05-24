@@ -7,8 +7,6 @@ import java.util.Objects;
 
 /**
  * Class holding provenance information provided by the user. This is a record of immutable data.
- * <p>
- * The provenance file contains information about the
  *
  * @since 1.0.0
  */
