@@ -14,7 +14,7 @@ public class ProvenanceParser {
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static final Class<DataSetProvenance> DATA_SET_PROVENANCE_CLASS = DataSetProvenance.class;
 
-  DataSetProvenance parseProvenanceJson(File provenanceFile) {
+  static DataSetProvenance parseProvenanceJson(File provenanceFile) {
     try {
       return OBJECT_MAPPER.readValue(provenanceFile,
           DATA_SET_PROVENANCE_CLASS);

@@ -8,7 +8,7 @@ class ProvenanceParserTest extends Specification {
 
     def "parsing a valid file works"() {
         when:
-        var resultingProvenanceObject = new ProvenanceParser().parseProvenanceJson(validFile)
+        var resultingProvenanceObject = ProvenanceParser.parseProvenanceJson(validFile)
         then:
         resultingProvenanceObject.measurementId() == "NGSQTEST001AE-1234512312"
         and:

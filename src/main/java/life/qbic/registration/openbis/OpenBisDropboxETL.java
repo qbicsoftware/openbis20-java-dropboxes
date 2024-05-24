@@ -36,14 +36,8 @@ import life.qbic.registration.openbis.types.QSampleType;
 public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 {
 
   private static final String PROVENANCE_FILE_NAME = "provenance.json";
-  private final ProvenanceParser provenanceParser;
 
-  public OpenBisDropboxETL() {
-    provenanceParser = new ProvenanceParser();
-  }
-
-  protected OpenBisDropboxETL(ProvenanceParser provenanceParser) {
-    this.provenanceParser = requireNonNull(provenanceParser, "provenanceParser must not be null");
+  public OpenBisDropboxETL(){
   }
 
 
@@ -58,7 +52,7 @@ public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 
 
   @Override
   public void process(IDataSetRegistrationTransactionV2 transaction) {
-    DataSetProvenance dataSetProvenance = provenanceParser.parseProvenanceJson(
+    DataSetProvenance dataSetProvenance = ProvenanceParser.parseProvenanceJson(
         new File(transaction.getIncoming(), PROVENANCE_FILE_NAME));
 
     String measurementId = dataSetProvenance.measurementId();
