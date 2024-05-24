@@ -1,7 +1,5 @@
 package life.qbic.registration.openbis;
 
-import static java.util.Objects.requireNonNull;
-
 import ch.systemsx.cisd.common.exceptions.NotImplementedException;
 import ch.systemsx.cisd.etlserver.registrator.DataSetRegistrationContext;
 import ch.systemsx.cisd.etlserver.registrator.api.v2.AbstractJavaDataSetRegistrationDropboxV2;
