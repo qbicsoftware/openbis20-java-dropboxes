@@ -8,7 +8,7 @@ import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchCriteria.MatchCl
 import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchCriteria.MatchClauseAttribute;
 import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SearchSubCriteria;
 import java.util.List;
-import life.qbic.registration.openbis.exceptions.fail.ToManyMeasurementsException;
+import life.qbic.registration.openbis.exceptions.fail.TooManyMeasurementsException;
 import life.qbic.registration.openbis.exceptions.retry.NoMeasurementsFoundException;
 
 /**
@@ -40,7 +40,7 @@ public class OpenBisSearchImpl implements OpenBisSearch {
       throw new NoMeasurementsFoundException("Measurement '" + measurementId + "' not found");
     }
     if (immutableSamples.size() > 1) {
-      throw new ToManyMeasurementsException(
+      throw new TooManyMeasurementsException(
           "Multiple measurement with id '" + measurementId + "' found");
     }
     return immutableSamples.get(0);
