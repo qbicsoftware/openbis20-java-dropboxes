@@ -1,7 +1,7 @@
 # OpenBiS Dropboxes
 
 !!! abstract
-After the [Data Scanner]((https://github.com/qbicsoftware/data-processing), data registration in openbis can be automated by dropboxes.
+After the [Data Scanner](https://github.com/qbicsoftware/data-processing), data registration in openbis can be automated by dropboxes.
 We use Java Dropboxes to move files into OpenBis (see
 the [Documentation on Java Dropboxes](https://openbis.readthedocs.io/en/20.10.x/software-developer-documentation/server-side-extensions/dss-dropboxes.html#java-dropboxes))
 
