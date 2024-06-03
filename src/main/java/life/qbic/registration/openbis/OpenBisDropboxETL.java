@@ -7,6 +7,8 @@ import ch.systemsx.cisd.etlserver.registrator.api.v2.IDataSet;
 import ch.systemsx.cisd.etlserver.registrator.api.v2.IDataSetRegistrationTransactionV2;
 import ch.systemsx.cisd.openbis.dss.generic.shared.api.internal.v2.ISampleImmutable;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import life.qbic.registration.openbis.exceptions.fail.MeasurementHasDataException;
 import life.qbic.registration.openbis.exceptions.fail.UnknownSampleTypeException;
 import life.qbic.registration.openbis.types.QDatasetType;
@@ -50,8 +52,9 @@ public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 
 
   @Override
   public void process(IDataSetRegistrationTransactionV2 transaction) {
+    File provenanceFile = new File(transaction.getIncoming(), PROVENANCE_FILE_NAME);
     DataSetProvenance dataSetProvenance = ProvenanceParser.parseProvenanceJson(
-        new File(transaction.getIncoming(), PROVENANCE_FILE_NAME));
+        provenanceFile);
 
     String measurementId = dataSetProvenance.measurementId();
 
@@ -68,8 +71,34 @@ public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 
     newDataSet.setPropertyValue(QPropertyType.Q_TASK_ID.getOpenBisPropertyName(), dataSetProvenance.taskId());
     QDatasetType qDatasetType = getDatasetType(measurementSample);
     newDataSet.setDataSetType(qDatasetType.name());
+    moveFiles(transaction, newDataSet, provenanceFile);
 
-    transaction.moveFile(transaction.getIncoming().getAbsolutePath(), newDataSet);
+  }
+
+  private void moveFiles(IDataSetRegistrationTransactionV2 transactionV2, IDataSet dataSet, File provenanceFile) {
+
+    byte[] buffer = null;
+    try {
+      buffer = Files.readAllBytes(provenanceFile.toPath().toAbsolutePath());
+      Files.delete(provenanceFile.toPath());
+      transactionV2.moveFile(transactionV2.getIncoming().getAbsolutePath(), dataSet);
+    } catch (RuntimeException e) {
+      //recover provenance file
+      try {
+        Files.write(provenanceFile.toPath().toAbsolutePath(), buffer);
+      } catch (IOException ex) {
+        throw new RuntimeException(ex);
+      }
+      throw e;
+    } catch (IOException e) {
+      //recover provenance file
+      try {
+        Files.write(provenanceFile.toPath().toAbsolutePath(), buffer);
+      } catch (IOException ex) {
+        throw new RuntimeException(ex);
+      }
+      throw new RuntimeException(e);
+    }
   }
 
   private static QDatasetType getDatasetType(ISampleImmutable measurementSample) {
