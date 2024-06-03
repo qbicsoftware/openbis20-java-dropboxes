@@ -71,24 +71,14 @@ public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 
     newDataSet.setPropertyValue(QPropertyType.Q_TASK_ID.getOpenBisPropertyName(), dataSetProvenance.taskId());
     QDatasetType qDatasetType = getDatasetType(measurementSample);
     newDataSet.setDataSetType(qDatasetType.name());
-    moveFiles(transaction, newDataSet, provenanceFile);
-
-  }
-
-  private void moveFiles(IDataSetRegistrationTransactionV2 transactionV2, IDataSet dataSet, File provenanceFile) {
 
     try {
-      var buffer = Files.readAllBytes(provenanceFile.toPath().toAbsolutePath());
       Files.delete(provenanceFile.toPath());
-      try {
-        transactionV2.moveFile(transactionV2.getIncoming().getAbsolutePath(), dataSet);
-      } catch (Exception e) {
-        Files.write(provenanceFile.toPath().toAbsolutePath(), buffer);
-        throw new RuntimeException(e);
-      }
+        transaction.moveFile(transaction.getIncoming().getAbsolutePath(), newDataSet);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+
   }
 
   private static QDatasetType getDatasetType(ISampleImmutable measurementSample) {
