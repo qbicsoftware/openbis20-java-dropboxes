@@ -7,6 +7,8 @@ import ch.systemsx.cisd.etlserver.registrator.api.v2.IDataSet;
 import ch.systemsx.cisd.etlserver.registrator.api.v2.IDataSetRegistrationTransactionV2;
 import ch.systemsx.cisd.openbis.dss.generic.shared.api.internal.v2.ISampleImmutable;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import life.qbic.registration.openbis.exceptions.fail.MeasurementHasDataException;
 import life.qbic.registration.openbis.exceptions.fail.UnknownSampleTypeException;
 import life.qbic.registration.openbis.types.QDatasetType;
@@ -50,8 +52,9 @@ public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 
 
   @Override
   public void process(IDataSetRegistrationTransactionV2 transaction) {
+    File provenanceFile = new File(transaction.getIncoming(), PROVENANCE_FILE_NAME);
     DataSetProvenance dataSetProvenance = ProvenanceParser.parseProvenanceJson(
-        new File(transaction.getIncoming(), PROVENANCE_FILE_NAME));
+        provenanceFile);
 
     String measurementId = dataSetProvenance.measurementId();
 
@@ -69,7 +72,13 @@ public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 
     QDatasetType qDatasetType = getDatasetType(measurementSample);
     newDataSet.setDataSetType(qDatasetType.name());
 
-    transaction.moveFile(transaction.getIncoming().getAbsolutePath(), newDataSet);
+    try {
+      Files.delete(provenanceFile.toPath());
+        transaction.moveFile(transaction.getIncoming().getAbsolutePath(), newDataSet);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
   }
 
   private static QDatasetType getDatasetType(ISampleImmutable measurementSample) {
