@@ -77,26 +77,16 @@ public class OpenBisDropboxETL extends AbstractJavaDataSetRegistrationDropboxV2 
 
   private void moveFiles(IDataSetRegistrationTransactionV2 transactionV2, IDataSet dataSet, File provenanceFile) {
 
-    byte[] buffer = null;
     try {
-      buffer = Files.readAllBytes(provenanceFile.toPath().toAbsolutePath());
+      var buffer = Files.readAllBytes(provenanceFile.toPath().toAbsolutePath());
       Files.delete(provenanceFile.toPath());
-      transactionV2.moveFile(transactionV2.getIncoming().getAbsolutePath(), dataSet);
-    } catch (RuntimeException e) {
-      //recover provenance file
       try {
+        transactionV2.moveFile(transactionV2.getIncoming().getAbsolutePath(), dataSet);
+      } catch (Exception e) {
         Files.write(provenanceFile.toPath().toAbsolutePath(), buffer);
-      } catch (IOException ex) {
-        throw new RuntimeException(ex);
+        throw new RuntimeException(e);
       }
-      throw e;
     } catch (IOException e) {
-      //recover provenance file
-      try {
-        Files.write(provenanceFile.toPath().toAbsolutePath(), buffer);
-      } catch (IOException ex) {
-        throw new RuntimeException(ex);
-      }
       throw new RuntimeException(e);
     }
   }
