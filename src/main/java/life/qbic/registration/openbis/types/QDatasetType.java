@@ -37,6 +37,8 @@ public enum QDatasetType {
       return Q_NGS_RAW_DATA;
     } else if (qSampleType == QSampleType.Q_PROTEOMICS_MEASUREMENT) {
       return Q_PROTEOMICS_RAW_DATA;
+    } else if (qSampleType == QSampleType.Q_IP_MEASUREMENT) {
+      return Q_IP_RAW_DATA;
     }
     throw new DatasetTypeMappingException("Unknown sample type to dataset type mapping. Cannot map " + qSampleType);
   }
