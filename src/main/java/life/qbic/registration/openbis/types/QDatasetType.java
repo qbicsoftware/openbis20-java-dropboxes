@@ -12,7 +12,7 @@ public enum QDatasetType {
 
   Q_NGS_RAW_DATA("Q_NGS_RAW_DATA"),
   Q_PROTEOMICS_RAW_DATA("Q_PROTEOMICS_RAW_DATA"),
-  ;
+  Q_IP_RAW_DATA("Q_IP_RAW_DATA");
 
   private final String openBisPropertyName;
 
