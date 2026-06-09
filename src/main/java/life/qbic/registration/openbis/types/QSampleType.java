@@ -9,7 +9,8 @@ import java.util.Optional;
  */
 public enum QSampleType {
   Q_NGS_MEASUREMENT("Q_NGS_MEASUREMENT"),
-  Q_PROTEOMICS_MEASUREMENT("Q_PROTEOMICS_MEASUREMENT");
+  Q_PROTEOMICS_MEASUREMENT("Q_PROTEOMICS_MEASUREMENT"),
+  Q_IP_MEASUREMENT("Q_IP_MEASUREMENT");
 
   private final String openBisTypeName;
 
